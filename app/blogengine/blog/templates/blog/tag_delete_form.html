@@ -1,0 +1,12 @@
+{% extends 'blog/base_blog.html' %}
+
+{% block title %}
+    Delete Tag "{{ tag.title|title }}" - {{ block.super }}
+{% endblock %}
+
+{% block content %}
+    <form action="{% url 'tag_delete' slug=tag.slug %}">
+        {% csrf_token %}
+        <h3>Are you sure y</h3>
+    </form>
+{% endblock %}
