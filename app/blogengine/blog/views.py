@@ -8,11 +8,16 @@ from .models import Post, Tag
 from .utils import *
 from .forms import TagForm, PostForm
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 
-# Create your views here.
+
 def posts_list(request):
     posts = Post.objects.all()
-    return render(request, 'blog/index.html', context={'posts': posts})
+    paginator = Paginator(posts, 2)
+    page_number = request.GET.get('page', 1)
+    page = paginator.get_page(page_number)
+    return render(request, 'blog/index.html', context={'posts': page})
 
 
 class PostDetail(ObjectDetailMixin, View):
@@ -20,49 +25,49 @@ class PostDetail(ObjectDetailMixin, View):
     template = 'blog/post_detail.html'
 
 
-class PostCreate(ObjectCreateMixin, View):
+class PostCreate(LoginRequiredMixin, ObjectCreateMixin, View):
     model_form = PostForm
     template = 'blog/post_create_form.html'
+    raise_exception = True
 
 
-class PostUpdate(ObjectUpdateMixin, View):
+class PostUpdate(LoginRequiredMixin, ObjectUpdateMixin, View):
     model = Post
     model_form = PostForm
     template = 'blog/post_update_form.html'
+    raise_exception = True
 
 
-class PostDelete(ObjectDeleteMixin, View):
+class PostDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
     model = Post
     template = 'blog/post_delete_form.html'
     redirect_url = 'posts_list_url'
+    raise_exception = True
 
 
 class TagDetail(ObjectDetailMixin, View):
     model = Tag
     template = 'blog/tag_detail.html'
 
-class TagCreate(ObjectCreateMixin, View):
+
+class TagCreate(LoginRequiredMixin, ObjectCreateMixin, View):
     model_form = TagForm
     template = 'blog/tag_create.html'
+    raise_exception = True
 
-class TagUpdate(ObjectUpdateMixin, View):
+
+class TagUpdate(LoginRequiredMixin, ObjectUpdateMixin, View):
     model = Tag
     model_form = TagForm
     template = 'blog/tag_update_form.html'
+    raise_exception = True
 
 
-class TagDelete(ObjectDeleteMixin, View):
+class TagDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
     model = Tag
     template = 'blog/tag_delete_form.html'
     redirect_url = 'tags_list_url'
-#     def get(self, request, slug):
-#         tag = Tag.objects.get(slug__iexact=slug)
-#         return render(request, 'blog/tag_delete_form.html', context={'tag': tag})
-#
-#     def post(self, request, slug):
-#         tag = Tag.objects.get(slug__iexact=slug)
-#         tag.delete()
-#         return redirect(reverse('tags_list_url'))
+    raise_exception = True
 
 
 def tags_list(request):
