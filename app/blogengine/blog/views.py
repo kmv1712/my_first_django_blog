@@ -13,7 +13,7 @@ from django.core.paginator import Paginator
 
 from django.db.models import Q
 
-COUNT_OF_POSTS = 2
+COUNT_OF_POSTS = 6
 
 
 def posts_list(request):
