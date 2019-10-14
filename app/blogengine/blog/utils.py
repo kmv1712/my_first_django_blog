@@ -4,6 +4,7 @@ from django.shortcuts import get_object_or_404
 
 from .models import *
 
+# FOLDER_WITH_STATIC_PATH = '../'
 
 class ObjectDetailMixin:
     model = None
@@ -25,6 +26,7 @@ class ObjectCreateMixin:
 
     def post(self, request):
         bound_form = self.model_form(request.POST)
+        handle_uploaded_file(request.FILES['file'])
 
         if bound_form.is_valid():
             new_obj = bound_form.save()
@@ -45,6 +47,7 @@ class ObjectUpdateMixin:
     def post(self, request, slug):
         obj = self.model.objects.get(slug__iexact=slug)
         bound_form = self.model_form(request.POST, instance=obj)
+        handle_uploaded_file(request.FILES['file'])
 
         if bound_form.is_valid():
             new_obj = bound_form.save()
@@ -65,3 +68,11 @@ class ObjectDeleteMixin:
         obj = self.model.objects.get(slug__iexact=slug)
         obj.delete()
         return redirect(reverse(self.redirect_url))
+
+
+def handle_uploaded_file(f):
+    # TODO: Доработать сохранение картинки.
+    destination = open("name.jpg'", 'wb+')
+    for chunk in f.chunks():
+        destination.write(chunk)
+    destination.close()

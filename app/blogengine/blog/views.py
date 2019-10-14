@@ -3,15 +3,15 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 from django.views.generic import View
 from django.shortcuts import redirect
+from django.http import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
+from django.db.models import Q
 
 from .models import Post, Tag
 from .utils import *
-from .forms import TagForm, PostForm
-
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator
-
-from django.db.models import Q
+from .forms import TagForm, PostForm, UploadFileForm
 
 COUNT_OF_POSTS = 6
 
@@ -104,3 +104,14 @@ class TagDelete(LoginRequiredMixin, ObjectDeleteMixin, View):
 def tags_list(request):
     tags = Tag.objects.all()
     return render(request, 'blog/tags_list.html', context={'tags': tags})
+
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        if form.is_valid():
+            handle_uploaded_file(request.FILES['file'])
+            return HttpResponseRedirect('/success/url/')
+    else:
+        form = UploadFileForm()
+    return render_to_response('upload.html', {'form': form})
