@@ -72,34 +72,19 @@
                 </li>
             </ul>
         </div>
-        <!--        Поисковая строка-->
-        <form class="form-inline my-2 my-lg-0" action="{% url 'posts_list_url' %}">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
+        <!-- Поисковая строка должна появлятся только при поиске статьи -->
+<!--        <form class="form-inline my-2 my-lg-0" action="{% url 'posts_list_url' %}">-->
+<!--            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">-->
+<!--            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>-->
+<!--        </form>-->
     </div>
 </nav>
 
-<div id="intro" class="view">
-    <div class="mask rgba-black-strong">
-        <div class="container-fluid d-flex align-items-center justify-content-center h-100">
-            <div class="row d-flex justify-content-center text-center">
-                <div class="col-md-10">
-                    <h2 class="display-4 font-weight-bold white-text pt-5 md-2">
-                        Блог девушки из Озерска.
-                    </h2>
-                    <hr class="hr-light">
-                    <h4 class="white-text my-4">
-                        В данном блоге Анастасия Андреева расскажет о своих увлечениях английским языком, пением, путешествиями.
-                        <button class="btn btn-outline-white waves-effect  waves-light">
-                            ReadMore <i class="fa fa-book"></i>
-                        </button>
-                    </h4>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+{% if show_introduction %}
+{% block introduction %}
+{% endblock %}
+{% endif %}
+
 </header>
 
 

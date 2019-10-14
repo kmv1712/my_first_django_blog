@@ -45,7 +45,8 @@ def posts_list(request):
         'page_object': page,
         'is_paginated': is_paginated,
         'next_url': next_url,
-        'prev_url': prev_url
+        'prev_url': prev_url,
+        'show_introduction': True,
     }
 
     return render(request, 'blog/index.html', context=context)
