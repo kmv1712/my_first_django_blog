@@ -7,7 +7,10 @@ Posts list
 {% endblock %}
 
 {% block content %}
+<h2 class="mb-5 font-weight-bold">Статьи:</h2>
+    <div class="row">
 {% for post in page_object.object_list %}
     {% include 'blog/includes/post_card_template.html' %}
 {% endfor %}
+    </div>
 {% endblock %}

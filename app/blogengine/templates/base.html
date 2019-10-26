@@ -28,7 +28,7 @@
 </head>
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar">
+<nav class="navbar navbar-expand-lg navbar-dark fixed-top scrolling-navbar top-nav-collapse">
     <div class="container">
         <a href="#" class="navbar-brand">Navbar</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle Navigation">
@@ -54,6 +54,12 @@
                     <a href="#contact" class="nav-link waves-effect waves-light">Support</a>
                 </li>
             </ul>
+            <!--        Поисковая строка-->
+            <form class="form-inline my-2 my-lg-0" action="{% url 'posts_list_url' %}">
+                <input class="form-control mr-sm-2" type="search" placeholder="Название статьи" aria-label="Search" name="search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Найти</button>
+            </form>
+            <!-- иконки вк, инстанрамм, -->
             <ul class="navbar-nav nav-flex-icons">
                 <li class="nav-item">
                     <a href="#" class="nav-link waves-effect waves-light">
@@ -72,14 +78,10 @@
                 </li>
             </ul>
         </div>
-        <!--        Поисковая строка-->
-        <form class="form-inline my-2 my-lg-0" action="{% url 'posts_list_url' %}">
-            <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search" name="search">
-            <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-        </form>
     </div>
 </nav>
 
+{% if not off_header %}
 <div id="intro" class="view">
     <div class="mask rgba-black-strong">
         <div class="container-fluid d-flex align-items-center justify-content-center h-100">
@@ -101,43 +103,42 @@
     </div>
 </div>
 </header>
-
+{% endif %}
 
 <div class="container mt-5">
 
-          <h2 class="mb-5 font-weight-bold">Examples</h2>
-          <div class="row">
 
-            {% block content %}
-            Content
-            {% endblock %}
 
-            {% if is_paginated %}
-            <nav aria-label="...">
-                <ul class="pagination">
-                    <li class="page-item {% if not prev_url %} disabled {% endif %}">
-                        <a class="page-link" href="{{ prev_url }}" tabindex="-1" aria-disabled="true">Previous</a>
-                    </li>
+    {% block content %}
+    Content
+    {% endblock %}
 
-                    {% for n in page_object.paginator.page_range %}
+    {% if is_paginated %}
+    <nav aria-label="...">
+        <ul class="pagination">
+            <li class="page-item {% if not prev_url %} disabled {% endif %}">
+                <a class="page-link" href="{{ prev_url }}" tabindex="-1" aria-disabled="true">Previous</a>
+            </li>
 
-                    {% if page_object.number == n %}
-                    <li class="page-item active" aria-current="page">
-                        <a class="page-link" href="?page={{ n }}">{{ n }} <span class="sr-only">(current)</span></a>
-                    </li>
-                    {% elif n > page_object.number|add:-3 and n < page_object.number|add:3 %}
-                    <li class="page-item">
-                        <a class="page-link" href="?page={{ n }}">{{ n }}</a>
-                    </li>
-                    {% endif %}
-                    {% endfor %}
-                    <li class="page-item {% if not prev_url %} disabled {% endif %}">
-                        <a class="page-link"  href="{{ next_url }}">Next</a>
-                    </li>
-                </ul>
-            </nav>
+            {% for n in page_object.paginator.page_range %}
+
+            {% if page_object.number == n %}
+            <li class="page-item active" aria-current="page">
+                <a class="page-link" href="?page={{ n }}">{{ n }} <span class="sr-only">(current)</span></a>
+            </li>
+            {% elif n > page_object.number|add:-3 and n < page_object.number|add:3 %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ n }}">{{ n }}</a>
+            </li>
             {% endif %}
-        </div>
+            {% endfor %}
+            <li class="page-item {% if not prev_url %} disabled {% endif %}">
+                <a class="page-link"  href="{{ next_url }}">Next</a>
+            </li>
+        </ul>
+    </nav>
+    {% endif %}
+</div>
 
 </div>
 
@@ -151,61 +152,61 @@
 </html>
 
 <footer class="page-footer font-small unique-color-dark pt-0">
-  <div class="primary-color">
-    <div class="container">
-      <div class="row py-4 d-flex align-items-center">
-        <div class="col-md-6 col-lg-5 text-center text-md-left mb-4 mb-md-0">
-          <h6 class="mb-0 white-text">Get connected with us on social networks!</h6>
+    <div class="primary-color">
+        <div class="container">
+            <div class="row py-4 d-flex align-items-center">
+                <div class="col-md-6 col-lg-5 text-center text-md-left mb-4 mb-md-0">
+                    <h6 class="mb-0 white-text">Get connected with us on social networks!</h6>
+                </div>
+                <div class="col-md-6 col-lg-7 text-center text-md-right">
+                    <a href="" class="fb-ic ml-0">
+                        <i class="fa fa-facebook white-text mr-4"></i>
+                    </a>
+                    <a href="" class="fb-ic ml-0">
+                        <i class="fa fa-facebook white-text mr-4"></i>
+                    </a>
+                    <a href="" class="fb-ic ml-0">
+                        <i class="fa fa-facebook white-text mr-4"></i>
+                    </a>
+                    <a href="" class="fb-ic ml-0">
+                        <i class="fa fa-facebook white-text mr-4"></i>
+                    </a>
+                </div>
+            </div>
         </div>
-        <div class="col-md-6 col-lg-7 text-center text-md-right">
-          <a href="" class="fb-ic ml-0">
-            <i class="fa fa-facebook white-text mr-4"></i>
-          </a>
-          <a href="" class="fb-ic ml-0">
-            <i class="fa fa-facebook white-text mr-4"></i>
-          </a>
-          <a href="" class="fb-ic ml-0">
-            <i class="fa fa-facebook white-text mr-4"></i>
-          </a>
-          <a href="" class="fb-ic ml-0">
-            <i class="fa fa-facebook white-text mr-4"></i>
-          </a>
+    </div>
+
+    <div class="container mt-5 mb-4 text-center text-md-left">
+        <div class="row mt-3">
+            <div class="col-md-3 col-lg-4 col-xl-3 mb-4">
+                <h6 class="text-uppercase font-weight-bold"><strong>Our Company</strong></h6>
+                <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+                <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A animi debitis delectus mollitia qui repellat repudiandae rerum, tempora totam.</p>
+
+            </div>
+            <div class="col-md-2 col-lg2 col-xl-2 mx-auto mb-4">
+                <h6 class="text-uppercase font-weight-bold"><strong>Products</strong></h6>
+                <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+                <p><a href="#">MDBootstrap</a></p>
+                <p><a href="#">MDBootstrap</a></p>
+                <p><a href="#">MDBootstrap</a></p>
+            </div>
+            <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+                <h6 class="text-uppercase font-weight-bold"><strong>Links</strong></h6>
+                <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+                <p><a href="#">Account</a></p>
+                <p><a href="#">Help</a></p>
+                <p><a href="#">MDBootstrap</a></p>
+            </div>
+            <div class="col-md-4 col-lg-3 col-xl-3">
+                <h6 class="text-uppercase font-weight-bold"><strong>Contact</strong></h6>
+                <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
+                <p><i class="fa fa-home mr-3"></i>London</p>
+                <p><i class="fa fa-envelope mr-3"></i>kmv@gmail.com</p>
+                <p><i class="fa fa-phone mr-3"></i>+380 798 89 78</p>
+            </div>
         </div>
-      </div>
     </div>
-  </div>
-
-  <div class="container mt-5 mb-4 text-center text-md-left">
-    <div class="row mt-3">
-      <div class="col-md-3 col-lg-4 col-xl-3 mb-4">
-        <h6 class="text-uppercase font-weight-bold"><strong>Our Company</strong></h6>
-        <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
-        <p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. A animi debitis delectus mollitia qui repellat repudiandae rerum, tempora totam.</p>
-
-      </div>
-      <div class="col-md-2 col-lg2 col-xl-2 mx-auto mb-4">
-        <h6 class="text-uppercase font-weight-bold"><strong>Products</strong></h6>
-        <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
-        <p><a href="#">MDBootstrap</a></p>
-        <p><a href="#">MDBootstrap</a></p>
-        <p><a href="#">MDBootstrap</a></p>
-      </div>
-      <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
-        <h6 class="text-uppercase font-weight-bold"><strong>Links</strong></h6>
-        <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
-        <p><a href="#">Account</a></p>
-        <p><a href="#">Help</a></p>
-        <p><a href="#">MDBootstrap</a></p>
-      </div>
-      <div class="col-md-4 col-lg-3 col-xl-3">
-        <h6 class="text-uppercase font-weight-bold"><strong>Contact</strong></h6>
-        <hr class="deep-purple accent-2 mb-4 mt-0 d-inline-block mx-auto" style="width: 60px;">
-        <p><i class="fa fa-home mr-3"></i>London</p>
-        <p><i class="fa fa-envelope mr-3"></i>kmv@gmail.com</p>
-        <p><i class="fa fa-phone mr-3"></i>+380 798 89 78</p>
-      </div>
-    </div>
-  </div>
 </footer>
 
 <!--Добавим js стили-->
