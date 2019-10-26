@@ -6,7 +6,7 @@
 
 {% block content %}
 
-    <form class="" action="{% url 'post_create_url' %}" method="post">
+    <form class="" action="{% url 'post_create_url' %}" method="post" enctype="multipart/form-data" >
         {% csrf_token %}
 
         {% for field in form %}
@@ -20,6 +20,7 @@
                 {{ field }}
             </div>
         {% endfor %}
+        <input type="file" name="file">
     <button type="submit" name="buttom">Create post</button>
     </form>
 
