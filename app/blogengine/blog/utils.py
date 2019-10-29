@@ -7,16 +7,27 @@ from django.shortcuts import get_object_or_404
 from .models import *
 
 
-def handle_uploaded_file(f, f_name):
-    # TODO: Доработать сохранение картинки.
-    newpath = "static/img/posts/{0}".format(f_name)
-    if not os.path.exists(newpath):
-        os.makedirs(newpath)
-    destination = open("{0}/{1}.jpg".format(newpath, f_name), 'wb+')
-    object = Image()
-    for chunk in f.chunks():
-        destination.write(chunk)
-    destination.close()
+def handle_uploaded_file(request_files, article_title):
+    """ Загрузит файл на сервер в папку posts.
+
+    Args:
+        request_files(list): Файлы полученные в форме.
+        article_title(str): Название статьи.
+
+    """
+    # TODO: Посмотреть, как подставлять static.
+    # TODO: Разобратся, как сохраняется tags и реализовать для images класс.
+    new_path = "static/img/posts/{0}".format(article_title)
+    # Если нет папки сосздадим новую.
+    if not os.path.exists(new_path):
+        os.makedirs(new_path)
+    # Запишим чанками на сервер.
+    for i, image in enumerate(request_files):
+        destination = open("{0}/{1}_{2}.jpg".format(new_path, article_title, i), 'wb+')
+        # object = Image()
+        for chunk in image.chunks() or []:
+            destination.write(chunk)
+        destination.close()
 
 
 class ObjectDetailMixin:
@@ -44,7 +55,9 @@ class ObjectCreateMixin:
 
     def post(self, request):
         bound_form = self.model_form(request.POST)
-        handle_uploaded_file(request.FILES['file'], request.POST['title'])
+        request_files = dict(request.FILES)
+        request_files = request_files.get('file')
+        handle_uploaded_file(request_files, request.POST['title'])
 
         if bound_form.is_valid():
             new_obj = bound_form.save()
