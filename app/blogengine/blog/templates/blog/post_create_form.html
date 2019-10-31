@@ -7,21 +7,24 @@
 {% block content %}
 
     <form class="" action="{% url 'post_create_url' %}" method="post" enctype="multipart/form-data" >
-        {% csrf_token %}
+    {% csrf_token %}
+    {% for hidden in form.hidden_fields %}
+        {{ hidden }}
+    {% endfor %}
 
-        {% for field in form %}
-            <div class="form-groupe">
-                {% if field.errors %}
-                    <div class="alert alert-danger">
-                        {{ field.errors }}
-                    </div>
-                {% endif %}
-                {{ field.label }}
-                {{ field }}
-            </div>
-        {% endfor %}
-        <input type="file" name="file"  multiple>
-    <button type="submit" name="buttom">Create post</button>
+    {% for field in form %}
+        {{ field.label }}
+        {{ field }} <br />
+    {% endfor %}
+
+    {{ image_form.management_form }}
+    {% for image in image_form %}
+        {{ image.label }}
+        {{ image }}
+    {% endfor %}
+
+
+    <input type="submit" name="submit" value="Submit" />
     </form>
 
 

@@ -16,7 +16,6 @@ class Post(models.Model):
     slug = models.SlugField(max_length=150, blank=True, unique=True)
     body = models.TextField(blank=True, db_index=True)
     tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
-    image = models.ManyToManyField('Image', blank=True, related_name='posts')
     date_pub = models.DateTimeField(auto_now_add=True)
 
     def get_absolute_url(self):
@@ -59,12 +58,33 @@ class Tag(models.Model):
     class Meta:
         ordering = ['title']
 
-class Image(models.Model):
-    title = models.CharField(max_length=50)
-    slug = models.SlugField(max_length=50, unique=True)
 
-    def __str__(self):
-        return '{}'.format(self.title)
+def get_image_filename(instance, filename):
+    """Получить ссылку куда сохраним файл.
 
-    class Meta:
-        ordering = ['title']
+    Args:
+        instance(Images):
+        filename(str): Имя загруженного файла.
+
+    Returns:
+        str
+
+    """
+    title = instance.post.title
+    slug = slugify(title)
+    return "post_images/%s-%s" % (slug, filename)
+
+
+class Images(models.Model):
+    post = models.ForeignKey(Post, default=None, on_delete=models.CASCADE)
+    image = models.ImageField(upload_to=get_image_filename, verbose_name='Image')
+
+# class Image(models.Model):
+#     title = models.CharField(max_length=50)
+#     slug = models.SlugField(max_length=50, unique=True)
+#
+#     def __str__(self):
+#         return '{}'.format(self.title)
+#
+#     class Meta:
+#         ordering = ['title']

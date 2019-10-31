@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 
 from .models import Post, Tag
 from .utils import *
-from .forms import TagForm, PostForm
+from .forms import TagForm, PostForm, ImageForm
 
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator

@@ -3,9 +3,11 @@ import os
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
+from django.forms import modelformset_factory
+from django.contrib import messages
 
 from .models import *
-
+from .forms import ImageForm
 
 def handle_uploaded_file(request_files, article_title):
     """ Загрузит файл на сервер в папку posts.
@@ -51,18 +53,33 @@ class ObjectCreateMixin:
 
     def get(self, request):
         form = self.model_form()
-        return render(request, self.template, context={'form': form})
+        ImageFormSet = modelformset_factory(Images, form=ImageForm, extra=3)
+        return render(request, self.template, context={'form': form, 'image_form': ImageFormSet()})
 
     def post(self, request):
+        ImageFormSet = modelformset_factory(Images, form=ImageForm, extra=3)
         bound_form = self.model_form(request.POST)
-        request_files = dict(request.FILES)
-        request_files = request_files.get('file')
-        handle_uploaded_file(request_files, request.POST['title'])
+        image_form = ImageFormSet(request.POST, request.FILES, queryset=Images.objects.none())
+        # request_files = dict(request.FILES)
+        # request_files = request_files.get('file')
+        # handle_uploaded_file(request_files, request.POST['title'])
 
-        if bound_form.is_valid():
-            new_obj = bound_form.save()
+        if bound_form.is_valid() and image_form.is_valid():
+            new_obj = bound_form.save(commit=False)
+            new_obj.user = request.user
+            new_obj.save()
+
+            for form in image_form.cleaned_data:
+                # this helps to not crash if the user
+                # do not upload all the photos
+                if form:
+                    image = form['image']
+                    photo = Images(post=new_obj, image=image)
+                    photo.save()
+            messages.success(request, "Yeeew, check it out on the home page!")
             return redirect(new_obj)
-        return render(request, self.template, context={'form': bound_form})
+            # return HttpResponseRedirect("/")
+        return render(request, self.template, context={'form': bound_form, 'image_form': image_form})
 
 
 class ObjectUpdateMixin:
