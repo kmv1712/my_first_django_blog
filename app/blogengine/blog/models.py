@@ -4,7 +4,7 @@ from django.shortcuts import reverse
 from django.utils.text import slugify
 from time import time
 
-from .сonstants import PATH_FOR_POST_IMAGES
+from .constants import PATH_FOR_POST_IMAGES
 
 alphabet_cyrillic_to_latin = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
                               'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',

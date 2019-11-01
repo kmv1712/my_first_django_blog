@@ -54,7 +54,7 @@ class ObjectCreateMixin:
 
     def get(self, request):
         form = self.model_form()
-        image_form_set = modelformset_factory(Images, form=ImageForm, extra=3)
+        image_form_set = modelformset_factory(Images, form=ImageForm, extra=1)
         image_form = image_form_set(queryset=Images.objects.none())
         return render(request, self.template, context={'form': form, 'image_form': image_form})
 
