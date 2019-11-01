@@ -9,6 +9,7 @@ from django.contrib import messages
 from .models import *
 from .forms import ImageForm
 
+
 def handle_uploaded_file(request_files, article_title):
     """ Загрузит файл на сервер в папку posts.
 
@@ -53,13 +54,14 @@ class ObjectCreateMixin:
 
     def get(self, request):
         form = self.model_form()
-        ImageFormSet = modelformset_factory(Images, form=ImageForm, extra=3)
-        return render(request, self.template, context={'form': form, 'image_form': ImageFormSet()})
+        image_form_set = modelformset_factory(Images, form=ImageForm, extra=3)
+        image_form = image_form_set(queryset=Images.objects.none())
+        return render(request, self.template, context={'form': form, 'image_form': image_form})
 
     def post(self, request):
-        ImageFormSet = modelformset_factory(Images, form=ImageForm, extra=3)
+        image_form_set = modelformset_factory(Images, form=ImageForm, extra=3)
         bound_form = self.model_form(request.POST)
-        image_form = ImageFormSet(request.POST, request.FILES, queryset=Images.objects.none())
+        image_form = image_form_set(request.POST, request.FILES, queryset=Images.objects.none())
         # request_files = dict(request.FILES)
         # request_files = request_files.get('file')
         # handle_uploaded_file(request_files, request.POST['title'])
