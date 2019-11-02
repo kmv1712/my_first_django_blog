@@ -5,8 +5,34 @@ from django.utils.text import slugify
 from time import time
 
 
+alphabet_cyrillic_to_latin = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
+                              'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+                              'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch',
+                              'ш': 'sh', 'щ': 'shch', 'ы': 'i', 'э': 'e', 'ю': 'yu', 'я': 'ya', 'ь': '', 'ъ': ''}
+
+
+def convert_cyrillic_to_latin(cyrillic_slug):
+    """ Конвертировать слаг из кириллицы в латиницу.
+
+    Args:
+         cyrillic_slug(str): Слаг с русскими символами.
+
+    Returns:
+        str
+    """
+    return slugify(''.join(alphabet_cyrillic_to_latin.get(w, w) for w in cyrillic_slug.lower()), allow_unicode=True)
+
+
 def gen_slug(s):
-    new_slug = slugify(s, allow_unicode=True)
+    """ Сгенерирует слаг переведенный с кирилицы в латиницу и временем создание поста.
+
+    Args:
+        s: Слаг с русскими символами.
+
+    Returns:
+        str
+    """
+    new_slug = convert_cyrillic_to_latin(s)
     return '{0}-{1}'.format(new_slug, str(int(time())))
 
 
