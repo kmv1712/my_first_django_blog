@@ -20,6 +20,19 @@ Create Post - {{ block.super }}
         {{ field }}
     </div>
     {% endfor %}
+
+    {% for field in form_image %}
+    <div class="form-groupe">
+        {% if field.errors %}
+        <div class="alert alert-danger">
+            {{ field.errors }}
+        </div>
+        {% endif %}
+        {{ field.label }}
+        {{ field }}
+    </div>
+    {% endfor %}
+
     <input type="file" name="file" multiple id="files" >
     <button type="submit" name="button" id="sendPost">Create post</button>
 </form>

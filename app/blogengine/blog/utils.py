@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 
 from .models import *
+from .forms import ImageForm
 
 
 def handle_uploaded_file(request_files, article_title):
@@ -51,17 +52,18 @@ class ObjectCreateMixin:
 
     def get(self, request):
         form = self.model_form()
-        return render(request, self.template, context={'form': form})
+        form_image = ImageForm()
+        return render(request, self.template, context={'form': form, 'form_image': form_image})
 
     def post(self, request):
         bound_form = self.model_form(request.POST)
         request_files = dict(request.FILES)
         request_files = request_files.get('file')
         handle_uploaded_file(request_files, request.POST['title'])
-
-
+        # ImageForm()
         if bound_form.is_valid():
             new_obj = bound_form.save()
+            a = ImageForm(request.POST).save()
             return redirect(new_obj)
         return render(request, self.template, context={'form': bound_form})
 
