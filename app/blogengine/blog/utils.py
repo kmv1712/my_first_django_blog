@@ -59,6 +59,7 @@ class ObjectCreateMixin:
         request_files = request_files.get('file')
         handle_uploaded_file(request_files, request.POST['title'])
 
+
         if bound_form.is_valid():
             new_obj = bound_form.save()
             return redirect(new_obj)

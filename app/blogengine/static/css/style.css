@@ -56,3 +56,25 @@ position:absolute;
 a.edit, a.delete{
     display: None;
 }
+
+/* Стиль поля загрузки */
+
+#images{
+    display: -webkit-flex;
+    display: flex;
+    -webkit-justify-content: space-around;
+    justify-content: space-around;
+    -webkit-align-items: flex-start;
+    align-items: flex-start;
+    -webkit-flex-wrap: wrap;
+    flex-wrap: wrap;
+}
+.thumbnail{
+  max-width: 250px;
+  max-height: 250px;
+}
+img.img_thump{
+  max-width: 240px;
+  max-height: 240px;
+  padding: 5px;
+}
