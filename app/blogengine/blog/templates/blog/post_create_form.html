@@ -6,7 +6,7 @@ Create Post - {{ block.super }}
 
 {% block content %}
 
-<input class="" action="{% url 'post_create_url' %}" method="post" enctype="multipart/form-data" >
+<form class="" action="{% url 'post_create_url' %}" method="post" enctype="multipart/form-data" >
     {% csrf_token %}
 
     {% for field in form %}
