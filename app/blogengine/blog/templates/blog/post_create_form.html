@@ -1,39 +1,61 @@
 {% extends 'blog/base_blog.html' %}
 
 {% block title %}
-    Create Post - {{ block.super }}
+Create Post - {{ block.super }}
 {% endblock %}
 
 {% block content %}
 
-    <form class="" action="{% url 'post_create_url' %}" method="post" enctype="multipart/form-data" >
+<input class="" action="{% url 'post_create_url' %}" method="post" enctype="multipart/form-data" >
     {% csrf_token %}
 
     {% for field in form %}
-        {{ field.label }}
-        {{ field }} <br />
+    {{ field.label }}
+    {{ field }} <br />
     {% endfor %}
 
     {% for image in image_form %}
-        {{ image.label }}
-        {{ image }}
+    {{ image.label }}
+    {{ image }}
     {% endfor %}
+    <input type="submit" id="added_field">Добавить поле для изображения.</input>
+    <input type="submit" id="deleted_field">Убрать поле для изображения.</input>
+    <input type="submit" name="submit" value="Submit" id="button_create_post">
+</form>
 
 
+<script>
+    function added_field_input_for_image(){
+        //if (!added_field.files.length){
+            i++;
+            let input = document.createElement("input");
+            document.createElement("input");
+            input.setAttribute('type', 'file');
+            input.setAttribute('name', `form-${i}-image`);
+            input.setAttribute('id', `id_form-${i}-image`);
+            input.setAttribute('accept', 'image/*');
+            parent_element.appendChild(input);
+            parent_element.appendChild (parent_element.removeChild (button_create_post));
+            //file_input = document.getElementById(`id_form-${i}-image`);
+            //file_input.addEventListener('click', added_field_input_for_image);
+        //}
+    }
 
+    function deleted_field_input_for_image(){
+            i--;
+            parent_element.removeChild (deleted_field);
+            //file_input = document.getElementById(`id_form-${i}-image`);
+            //file_input.addEventListener('click', added_field_input_for_image);
+    }
 
-<!--    <input class="multiFileInput" type="file" name="files" onchange="newInput();">-->
-
-<!--    <script>-->
-
-<!--        let input = document.createElement("input");-->
-<!--        input.setAttribute('type', 'text');-->
-
-<!--    </script>-->
-
-    <input type="submit" name="submit" value="Submit" />
-    </form>
-
+    var i = 0;
+    button_create_post = document.getElementById('button_create_post');
+    var parent_element = button_create_post.parentNode;
+    let added_field = document.getElementById('added_field');
+    let deleted_field = document.getElementById('deleted_field');
+    added_field.addEventListener('click', added_field_input_for_image);
+    deleted_field.addEventListener('click', deleted_field_input_for_image);
+</script>
 
 {% endblock %}
 
