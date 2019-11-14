@@ -7,24 +7,11 @@ from django.shortcuts import get_object_or_404
 from .models import *
 
 
-def handle_uploaded_file(f, f_name):
-    # TODO: Доработать сохранение картинки.
-    newpath = "static/img/posts/{0}".format(f_name)
-    if not os.path.exists(newpath):
-        os.makedirs(newpath)
-    destination = open("{0}/{1}.jpg".format(newpath, f_name), 'wb+')
-    object = Image()
-    for chunk in f.chunks():
-        destination.write(chunk)
-    destination.close()
-
-
 class ObjectDetailMixin:
     model = None
     template = None
 
     def get(self, request, slug):
-        # post = Post.objects.get(slug__iexact=slug)
         obj = get_object_or_404(self.model, slug__iexact=slug)
         return render(request, self.template, context={
             self.model.__name__.lower(): obj,
@@ -44,10 +31,18 @@ class ObjectCreateMixin:
 
     def post(self, request):
         bound_form = self.model_form(request.POST)
-        handle_uploaded_file(request.FILES['file'], request.POST['title'])
 
         if bound_form.is_valid():
             new_obj = bound_form.save()
+
+            for item in dict(request.FILES).get('image'):
+                d = {'post': new_obj, 'image': item}
+                new_image = Images.objects.create(
+                    post=d.get('post'),
+                    image=d.get('image')
+                )
+                new_image.save()
+
             return redirect(new_obj)
         return render(request, self.template, context={'form': bound_form})
 
@@ -65,7 +60,6 @@ class ObjectUpdateMixin:
     def post(self, request, slug):
         obj = self.model.objects.get(slug__iexact=slug)
         bound_form = self.model_form(request.POST, instance=obj)
-        handle_uploaded_file(request.FILES['file'])
 
         if bound_form.is_valid():
             new_obj = bound_form.save()

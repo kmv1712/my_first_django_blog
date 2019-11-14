@@ -1,28 +1,28 @@
 {% extends 'blog/base_blog.html' %}
 
 {% block title %}
-    Create Post - {{ block.super }}
+Create Post - {{ block.super }}
 {% endblock %}
 
 {% block content %}
 
-    <form class="" action="{% url 'post_create_url' %}" method="post" enctype="multipart/form-data" >
-        {% csrf_token %}
+<form class="" action="{% url 'post_create_url' %}" method="post" enctype="multipart/form-data" >
+    {% csrf_token %}
 
-        {% for field in form %}
-            <div class="form-groupe">
-                {% if field.errors %}
-                    <div class="alert alert-danger">
-                        {{ field.errors }}
-                    </div>
-                {% endif %}
-                {{ field.label }}
-                {{ field }}
-            </div>
-        {% endfor %}
-        <input type="file" name="file">
+    {% for field in form %}
+    <div class="form-groupe">
+        {% if field.errors %}
+        <div class="alert alert-danger">
+            {{ field.errors }}
+        </div>
+        {% endif %}
+        {{ field.label }}
+        {{ field }}
+    </div>
+    {% endfor %}
+    <input multiple type="file" name="image">
     <button type="submit" name="buttom">Create post</button>
-    </form>
+</form>
 
 
 {% endblock %}
