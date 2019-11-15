@@ -4,9 +4,30 @@ from django.shortcuts import reverse
 from django.utils.text import slugify
 from time import time
 
+alphabet_cyrillic_to_latin = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
+                              'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
+                              'р': 'r', 'с': 's', 'т': 't', 'у': 'u', 'ф': 'f', 'х': 'kh', 'ц': 'ts', 'ч': 'ch',
+                              'ш': 'sh', 'щ': 'shch', 'ы': 'i', 'э': 'e', 'ю': 'yu', 'я': 'ya', 'ь': '', 'ъ': ''}
+
+
+def convert_cyrillic_to_latin(cyrillic_slug):
+    """ Конвертировать слаг из кириллицы в латиницу.
+    Args:
+         cyrillic_slug(str): Слаг с русскими символами.
+    Returns:
+        str
+    """
+    return slugify(''.join(alphabet_cyrillic_to_latin.get(w, w) for w in cyrillic_slug.lower()), allow_unicode=True)
+
 
 def gen_slug(s):
-    new_slug = slugify(s, allow_unicode=True)
+    """ Сгенерирует слаг переведенный с кирилицы в латиницу и временем создание поста.
+    Args:
+        s: Слаг с русскими символами.
+    Returns:
+        str
+    """
+    new_slug = convert_cyrillic_to_latin(s)
     return '{0}-{1}'.format(new_slug, str(int(time())))
 
 
@@ -58,7 +79,9 @@ class Tag(models.Model):
     class Meta:
         ordering = ['title']
 
+
 PATH_FOR_POST_IMAGES = 'static/img/post_images/'
+
 
 def get_image_filename(instance, filename):
     """Получить ссылку, куда сохраним файл.
@@ -68,10 +91,10 @@ def get_image_filename(instance, filename):
     Returns:
         str
     """
-    title = instance.post.title
-    slug = slugify(title)
-    return "{0}{1}-{2}".format(PATH_FOR_POST_IMAGES, slug, filename)
+    slug = gen_slug(instance.post.title)
+    return "{0}{1}_{2}".format(PATH_FOR_POST_IMAGES, slug, filename)
+
 
 class Images(models.Model):
     post = models.ForeignKey(Post, default=None, on_delete=models.CASCADE)
-    image = models.ImageField(upload_to=get_image_filename, verbose_name='Image', default = 'pic_folder/None/no-img.jpg')
+    image = models.ImageField(upload_to=get_image_filename, verbose_name='Image', default='pic_folder/None/no-img.jpg')

@@ -21,6 +21,22 @@ class ObjectDetailMixin:
         })
 
 
+def save_image(post_obj, input_images):
+    """Создаст в БД запись(связаную с постом) и запишет переданное изображение на сервер.
+
+    Args:
+        post_obj(Post): Пост, записаный в БД.
+        input_images(list): Переданные изображения в input multiple c id = image.
+    """
+    for item in input_images or []:
+        data_for_model_images = {'post': post_obj, 'image': item}
+        new_image = Images.objects.create(
+            post=data_for_model_images.get('post'),
+            image=data_for_model_images.get('image')
+        )
+        new_image.save()
+
+
 class ObjectCreateMixin:
     model_form = None
     template = None
@@ -34,15 +50,8 @@ class ObjectCreateMixin:
 
         if bound_form.is_valid():
             new_obj = bound_form.save()
-
-            for item in dict(request.FILES).get('image'):
-                d = {'post': new_obj, 'image': item}
-                new_image = Images.objects.create(
-                    post=d.get('post'),
-                    image=d.get('image')
-                )
-                new_image.save()
-
+            input_images = dict(request.FILES).get('image')
+            save_image(new_obj, input_images)
             return redirect(new_obj)
         return render(request, self.template, context={'form': bound_form})
 
