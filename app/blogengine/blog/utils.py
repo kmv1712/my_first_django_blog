@@ -13,11 +13,16 @@ class ObjectDetailMixin:
 
     def get(self, request, slug):
         obj = get_object_or_404(self.model, slug__iexact=slug)
+        images = Images.objects.filter(post_id=obj.id)
+        obj.body = obj.body.split('{')
+
         return render(request, self.template, context={
             self.model.__name__.lower(): obj,
             'admin_object': obj,
+            'images': images,
             'detail': True,
-            'off_header': True
+            'off_header': True,
+            'img': images[0].image.url.replace('static/', '')
         })
 
 
