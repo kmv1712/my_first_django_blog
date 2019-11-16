@@ -1,10 +1,12 @@
 import os
+import re
 
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 
 from .models import *
+
 
 
 class ObjectDetailMixin:
@@ -14,7 +16,15 @@ class ObjectDetailMixin:
     def get(self, request, slug):
         obj = get_object_or_404(self.model, slug__iexact=slug)
         images = Images.objects.filter(post_id=obj.id)
-        obj.body = obj.body.split('{')
+        prepared_data_for_body = obj.body.split('{')
+
+        list_url_image = [image.image.name.split('_')[2].replace('.jpg', '') for image in images]
+
+        for i, part_text in enumerate(prepared_data_for_body):
+            if re.findall('src=', part_text):
+                part_text = part_text.replace('src=', '')
+                prepared_data_for_body[i] = {'img': images[list_url_image.index(part_text)].image.name.replace('static/', '')}
+        obj.body = prepared_data_for_body
 
         return render(request, self.template, context={
             self.model.__name__.lower(): obj,

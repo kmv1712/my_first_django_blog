@@ -14,12 +14,11 @@
 
 
             {% for item in post.body %}
-        <div class="row">
-            <div class="col">
-                <image class="img-fluid" src="{% static  img %}">
-            </div>
-        </div>
+            {% if item.img %}
+                 <image class="img-fluid" src="{% static  item.img %}">
+            {% else %}
                 <p> {{ item }} </p>
+            {% endif %}
             {% endfor %}
 
     </div>
