@@ -1,4 +1,3 @@
-import os
 import re
 
 from django.shortcuts import render
@@ -8,7 +7,6 @@ from django.shortcuts import get_object_or_404
 from .models import *
 
 
-
 class ObjectDetailMixin:
     model = None
     template = None
@@ -16,8 +14,7 @@ class ObjectDetailMixin:
     def get(self, request, slug):
         obj = get_object_or_404(self.model, slug__iexact=slug)
         images = Images.objects.filter(post_id=obj.id)
-        prepared_data_for_body = obj.body.split('{')
-
+        prepared_data_for_body = re.split(r'\{(.*?)\}', obj.body)
         list_url_image = [image.image.name.split('_')[2].replace('.jpg', '') for image in images]
 
         for i, part_text in enumerate(prepared_data_for_body):
