@@ -11,25 +11,37 @@ class ObjectDetailMixin:
     model = None
     template = None
 
-    def get(self, request, slug):
-        obj = get_object_or_404(self.model, slug__iexact=slug)
+    def prepare_field_body_for_output_in_html(self, obj):
+        """
+        Подготавить данные в body для вывода текста и изображений в html.
+
+        Метод разделяет текст на части по разделителю {},
+        сопоставляет Имя изображения и Путь к изображению на сервере,
+        заменяет {src=Имя изображения} на {'img': Путь к изображению на сервере}
+        """
+        # Получим список имен изображений загруженные на сервер.
         images = Images.objects.filter(post_id=obj.id)
-        prepared_data_for_body = re.split(r'\{(.*?)\}', obj.body)
         list_url_image = [image.image.name.split('_')[2].replace('.jpg', '') for image in images]
 
+        # Разделим текст по шаблону {}
+        prepared_data_for_body = re.split(r'\{(.*?)\}', obj.body)
+        # Сопоставим имя с сервера с именем в body и заменим на Путь к изображению на сервере
         for i, part_text in enumerate(prepared_data_for_body):
             if re.findall('src=', part_text):
                 part_text = part_text.replace('src=', '')
-                prepared_data_for_body[i] = {'img': images[list_url_image.index(part_text)].image.name.replace('static/', '')}
+                prepared_data_for_body[i] = {
+                    'img': images[list_url_image.index(part_text)].image.name.replace('static/', '')}
         obj.body = prepared_data_for_body
+
+    def get(self, request, slug):
+        obj = get_object_or_404(self.model, slug__iexact=slug)
+        self.prepare_field_body_for_output_in_html(obj)
 
         return render(request, self.template, context={
             self.model.__name__.lower(): obj,
             'admin_object': obj,
-            'images': images,
             'detail': True,
             'off_header': True,
-            'img': images[0].image.url.replace('static/', '')
         })
 
 
@@ -64,6 +76,13 @@ class ObjectCreateMixin:
             new_obj = bound_form.save()
             input_images = dict(request.FILES).get('image')
             save_image(new_obj, input_images)
+            post = Post.objects.filter(id=new_obj.id)
+            images = Images.objects.filter(post_id=new_obj.id)
+            list_url_image = [image.image.name.split('_')[2].replace('.jpg', '') for image in images]
+            for item in post:
+                if item.main_image in list_url_image:
+                    item.main_image = images[list_url_image.index(item.main_image)].image.name.replace('static/', '')
+                    item.save()
             return redirect(new_obj)
         return render(request, self.template, context={'form': bound_form})
 
@@ -84,6 +103,15 @@ class ObjectUpdateMixin:
 
         if bound_form.is_valid():
             new_obj = bound_form.save()
+            input_images = dict(request.FILES).get('image')
+            save_image(new_obj, input_images)
+            post = Post.objects.filter(id=new_obj.id)
+            images = Images.objects.filter(post_id=new_obj.id)
+            list_url_image = [image.image.name.split('_')[2].replace('.jpg', '') for image in images]
+            for item in post:
+                if item.main_image in list_url_image:
+                    item.main_image = images[list_url_image.index(item.main_image)].image.name.replace('static/', '')
+                    item.save()
             return redirect(new_obj)
         return render(request, self.template, context={'form': bound_form, self.model.__name__.lower(): obj})
 

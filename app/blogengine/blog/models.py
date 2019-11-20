@@ -3,6 +3,7 @@ from django.shortcuts import reverse
 
 from django.utils.text import slugify
 from time import time
+import re
 
 alphabet_cyrillic_to_latin = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
                               'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
@@ -37,6 +38,7 @@ class Post(models.Model):
     slug = models.SlugField(max_length=150, blank=True, unique=True)
     body = models.TextField(blank=True, db_index=True)
     tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
+    main_image = models.CharField(max_length=150, db_index=True, default='')
     date_pub = models.DateTimeField(auto_now_add=True)
 
     def get_absolute_url(self):
