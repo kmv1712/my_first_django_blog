@@ -8,12 +8,14 @@
         {% endfor %}
     </div>
 
-    <div class="view overlay zoom">
-        <img src="{% static post.main_image %}" alt="" class="img-fluid">
-        <div class="mask flex-center"></div>
-    </div>
+    <a href="{{ post.get_absolute_url }}">
+        <div class="view overlay zoom">
+            <img src="{% static post.main_image %}" alt="" class="img-fluid">
+            <div class="mask flex-center"></div>
+        </div>
+    </a>
 
-    <a href="{{ post.get_absolute_url }}"><p class="grey-text">{{ post.body|truncatewords:15 }}</p></a>
+    <a href="{{ post.get_absolute_url }}"><p class="grey-text">{{ post.body_text|truncatewords:15 }}</p></a>
 
 
 </div>

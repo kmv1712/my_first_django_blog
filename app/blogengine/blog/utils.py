@@ -80,9 +80,14 @@ class ObjectCreateMixin:
             images = Images.objects.filter(post_id=new_obj.id)
             list_url_image = [image.image.name.split('_')[2].replace('.jpg', '') for image in images]
             for item in post:
+                # Убираю из текста метки для изображения.
+                item.body_text = re.sub(r'\{(.*?)\}', ' ', item.body)
+                item.body_text = item.body_text.replace('\r\n', '')
+                # Сопоставляю изображение по имени подставляю путь.
                 if item.main_image in list_url_image:
                     item.main_image = images[list_url_image.index(item.main_image)].image.name.replace('static/', '')
-                    item.save()
+                item.save()
+
             return redirect(new_obj)
         return render(request, self.template, context={'form': bound_form})
 
@@ -109,9 +114,12 @@ class ObjectUpdateMixin:
             images = Images.objects.filter(post_id=new_obj.id)
             list_url_image = [image.image.name.split('_')[2].replace('.jpg', '') for image in images]
             for item in post:
+                # Убираю из текста метки для изображения.
+                item.body_text = re.sub(r'\{(.*?)\}', ' ', item.body)
+                item.body_text = item.body_text.replace('\r\n', '')
                 if item.main_image in list_url_image:
                     item.main_image = images[list_url_image.index(item.main_image)].image.name.replace('static/', '')
-                    item.save()
+                item.save()
             return redirect(new_obj)
         return render(request, self.template, context={'form': bound_form, self.model.__name__.lower(): obj})
 

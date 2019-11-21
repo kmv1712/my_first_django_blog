@@ -37,6 +37,7 @@ class Post(models.Model):
     title = models.CharField(max_length=150, db_index=True)
     slug = models.SlugField(max_length=150, blank=True, unique=True)
     body = models.TextField(blank=True, db_index=True)
+    body_text = models.TextField(blank=True, db_index=True, default='')
     tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
     main_image = models.CharField(max_length=150, db_index=True, default='')
     date_pub = models.DateTimeField(auto_now_add=True)
