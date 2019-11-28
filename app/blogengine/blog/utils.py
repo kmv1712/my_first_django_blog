@@ -11,7 +11,8 @@ class ObjectDetailMixin:
     model = None
     template = None
 
-    def prepare_field_body_for_output_in_html(self, obj):
+    @staticmethod
+    def prepare_field_body_for_output_in_html(obj):
         """
         Подготавить данные в body для вывода текста и изображений в html.
 
