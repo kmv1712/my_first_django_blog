@@ -30,8 +30,9 @@ class ObjectDetailMixin:
         for i, part_text in enumerate(prepared_data_for_body):
             if re.findall('src=', part_text):
                 part_text = part_text.replace('src=', '')
-                prepared_data_for_body[i] = {
-                    'img': images[list_url_image.index(part_text)].image.name.replace('static/', '')}
+                if part_text.replace('_', '') in list_url_image and list_url_image.index(part_text.replace('_', '')):
+                    prepared_data_for_body[i] = {
+                        'img': images.get(list_url_image.index(part_text.replace('_', ''))).image.name.replace('static/', '')}
         obj.body = prepared_data_for_body
 
     def get(self, request, slug):
@@ -79,14 +80,15 @@ class ObjectCreateMixin:
             save_image(new_obj, input_images)
             post = Post.objects.filter(id=new_obj.id)
             images = Images.objects.filter(post_id=new_obj.id)
-            list_url_image = [image.image.name.split('_')[2].replace('.jpg', '') for image in images]
+            list_url_image = [image.image.name.split('_')[-1].replace('.jpg', '') for image in images]
             for item in post:
                 # Убираю из текста метки для изображения.
                 item.body_text = re.sub(r'\{(.*?)\}', ' ', item.body)
                 item.body_text = item.body_text.replace('\r\n', '')
                 # Сопоставляю изображение по имени подставляю путь.
-                if item.main_image in list_url_image:
-                    item.main_image = images[list_url_image.index(item.main_image)].image.name.replace('static/', '')
+                if item.main_image.replace('_', '') in list_url_image and list_url_image.index(item.main_image.replace('_', '')):
+                    if item.main_image in list_url_image:
+                        item.main_image = images[list_url_image.index(item.main_image.replace('_', ''))].image.name.replace('static/', '')
                 item.save()
 
             return redirect(new_obj)
