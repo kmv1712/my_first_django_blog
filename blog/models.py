@@ -54,6 +54,9 @@ class Post(models.Model):
     def save(self, *args, **kwargs):
         if not self.id:
             self.slug = gen_slug(self.title)
+        # Убираю из текста метки для изображения.
+        self.body_text = re.sub(r'\{(.*?)\}', ' ', self.body)
+        self.body_text = self.body_text.replace('\r\n', '')
         super().save(*args, **kwargs)
 
     def __str__(self):
@@ -101,3 +104,5 @@ def get_image_filename(instance, filename):
 class Images(models.Model):
     post = models.ForeignKey(Post, default=None, on_delete=models.CASCADE)
     image = models.ImageField(upload_to=get_image_filename, verbose_name='Image', default='pic_folder/None/no-img.jpg')
+
+

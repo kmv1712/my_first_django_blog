@@ -48,12 +48,16 @@ class ObjectDetailMixin:
 
 
 def save_image(post_obj, input_images):
-    """Создаст в БД запись(связаную с постом) и запишет переданное изображение на сервер.
+    """Создаст в БД запись(связаную с постом), запишет переданное изображение на сервер, вернет список объектов загруженных изображений.
 
     Args:
         post_obj(Post): Пост, записаный в БД.
         input_images(list): Переданные изображения в input multiple c id = image.
+
+    Returns:
+        list[Images]
     """
+    list_with_objects_images = []
     for item in input_images or []:
         data_for_model_images = {'post': post_obj, 'image': item}
         new_image = Images.objects.create(
@@ -61,6 +65,8 @@ def save_image(post_obj, input_images):
             image=data_for_model_images.get('image')
         )
         new_image.save()
+        list_with_objects_images.append(new_image)
+    return list_with_objects_images
 
 
 class ObjectCreateMixin:
@@ -75,23 +81,20 @@ class ObjectCreateMixin:
         bound_form = self.model_form(request.POST)
 
         if bound_form.is_valid():
-            new_obj = bound_form.save()
-            input_images = dict(request.FILES).get('image')
-            save_image(new_obj, input_images)
-            post = Post.objects.filter(id=new_obj.id)
-            images = Images.objects.filter(post_id=new_obj.id)
-            list_url_image = [image.image.name.split('_')[-1].replace('.jpg', '') for image in images]
-            for item in post:
-                # Убираю из текста метки для изображения.
-                item.body_text = re.sub(r'\{(.*?)\}', ' ', item.body)
-                item.body_text = item.body_text.replace('\r\n', '')
-                # Сопоставляю изображение по имени подставляю путь.
-                if item.main_image.replace('_', '') in list_url_image and list_url_image.index(item.main_image.replace('_', '')):
-                    if item.main_image in list_url_image:
-                        item.main_image = images[list_url_image.index(item.main_image.replace('_', ''))].image.name.replace('static/', '')
-                item.save()
+            new_post_obj = bound_form.save()
+            # Достанем загруженные изображения из request.
+            uploaded_images = dict(request.FILES).get('image')
+            images = save_image(new_post_obj, uploaded_images)
 
-            return redirect(new_obj)
+            list_url_image = [image.image.name.split('_')[-1].replace('.jpg', '') for image in images]
+
+            # Сопоставляю изображение по имени подставляю путь.
+            if new_post_obj.main_image.replace('_', '') in list_url_image and list_url_image.index(new_post_obj.main_image.replace('_', '')):
+                if new_post_obj.main_image in list_url_image:
+                    new_post_obj.main_image = images[list_url_image.index(new_post_obj.main_image.replace('_', ''))].image.name.replace('static/', '')
+            new_post_obj.save()
+
+            return redirect(new_post_obj)
         return render(request, self.template, context={'form': bound_form})
 
 
