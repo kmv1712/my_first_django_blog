@@ -22,7 +22,7 @@ class ObjectDetailMixin:
         """
         # Получим список имен изображений загруженные на сервер.
         images = Images.objects.filter(post_id=obj.id)
-        list_url_image = [image.image.name.split('_')[2].replace('.jpg', '') for image in images]
+        list_url_image = [image.image.name.split('-')[-1] for image in images]
 
         # Разделим текст по шаблону {}
         prepared_data_for_body = re.split(r'\{(.*?)\}', obj.body)
@@ -30,9 +30,8 @@ class ObjectDetailMixin:
         for i, part_text in enumerate(prepared_data_for_body):
             if re.findall('src=', part_text):
                 part_text = part_text.replace('src=', '')
-                if part_text.replace('_', '') in list_url_image and list_url_image.index(part_text.replace('_', '')):
-                    prepared_data_for_body[i] = {
-                        'img': images.get(list_url_image.index(part_text.replace('_', ''))).image.name.replace('static/', '')}
+                prepared_data_for_body[i] = {
+                    'img': images[list_url_image.index(part_text)].image.name.replace('static/', '')}
         obj.body = prepared_data_for_body
 
     def get(self, request, slug):
@@ -84,16 +83,22 @@ class ObjectCreateMixin:
             new_post_obj = bound_form.save()
             # Достанем загруженные изображения из request.
             uploaded_images = dict(request.FILES).get('image')
-            images = save_image(new_post_obj, uploaded_images)
+            # Найдем введенные пользователем названия. Значения хранятся в полях с маской image_
+            name_files_input_user = [v for k,v in request.POST.items() if bool(re.match(r'image_', k))]
 
-            list_url_image = [image.image.name.split('_')[-1].replace('.jpg', '') for image in images]
+            if len(name_files_input_user) == len(uploaded_images):
+                # Заменим названия файлов на названия введенные пользователем.
+                for i, item in enumerate(uploaded_images):
+                    item.name = name_files_input_user[i]
 
-            # Сопоставляю изображение по имени подставляю путь.
-            if new_post_obj.main_image.replace('_', '') in list_url_image and list_url_image.index(new_post_obj.main_image.replace('_', '')):
+                images = save_image(new_post_obj, uploaded_images)
+                list_url_image = [image.image.name.split('-')[-1] for image in images]
+
+                # Сопоставляю изображение по имени подставляю путь.
                 if new_post_obj.main_image in list_url_image:
-                    new_post_obj.main_image = images[list_url_image.index(new_post_obj.main_image.replace('_', ''))].image.name.replace('static/', '')
-            new_post_obj.save()
-
+                    index_obj_need_name = list_url_image.index(new_post_obj.main_image)
+                    new_post_obj.main_image = (images[index_obj_need_name].image.name.replace('static/', ''))
+                    new_post_obj.save()
             return redirect(new_post_obj)
         return render(request, self.template, context={'form': bound_form})
 

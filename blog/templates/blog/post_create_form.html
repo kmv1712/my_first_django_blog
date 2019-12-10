@@ -16,7 +16,11 @@ Create Post - {{ block.super }}
             {{ field.errors }}
         </div>
         {% endif %}
+
         {{ field.label }}
+        {% if field.help_text %}
+        <p class="help">{{ field.help_text }}</p>
+        {% endif %}
         {{ field }}
     </div>
     {% endfor %}

@@ -36,10 +36,10 @@ def gen_slug(s):
 class Post(models.Model):
     title = models.CharField(max_length=150, db_index=True)
     slug = models.SlugField(max_length=150, blank=True, unique=True)
-    body = models.TextField(blank=True, db_index=True)
+    body = models.TextField(blank=True, db_index=True, help_text='Изображение добавлять например: текст {*.jpg(Расширение может быть любым)} текс')
     body_text = models.TextField(blank=True, db_index=True, default='')
     tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
-    main_image = models.CharField(max_length=150, db_index=True, default='')
+    main_image = models.CharField(max_length=150, db_index=True, default='', help_text='Название изображение записывать с расширением')
     date_pub = models.DateTimeField(auto_now_add=True)
 
     def get_absolute_url(self):
@@ -98,7 +98,7 @@ def get_image_filename(instance, filename):
         str
     """
     slug = gen_slug(instance.post.title)
-    return "{0}{1}_{2}".format(PATH_FOR_POST_IMAGES, slug, filename)
+    return "{0}{1}-{2}".format(PATH_FOR_POST_IMAGES, slug, filename)
 
 
 class Images(models.Model):
