@@ -3,6 +3,7 @@ import re
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 
 from .models import *
 
@@ -31,7 +32,7 @@ class ObjectDetailMixin:
             if re.findall('src=', part_text):
                 part_text = part_text.replace('src=', '')
                 prepared_data_for_body[i] = {
-                    'img': images[list_url_image.index(part_text)].image.name.replace('static/', '')}
+                    'img': images[list_url_image.index(part_text)].image.name.replace(settings.STATIC_ROOT, '')}
         obj.body = prepared_data_for_body
 
     def get(self, request, slug):
@@ -97,7 +98,7 @@ class ObjectCreateMixin:
                 # Сопоставляю изображение по имени подставляю путь.
                 if new_post_obj.main_image in list_url_image:
                     index_obj_need_name = list_url_image.index(new_post_obj.main_image)
-                    new_post_obj.main_image = (images[index_obj_need_name].image.name.replace('static/', ''))
+                    new_post_obj.main_image = (images[index_obj_need_name].image.name.replace(settings.STATIC_ROOT, ''))
                     new_post_obj.save()
             return redirect(new_post_obj)
         return render(request, self.template, context={'form': bound_form})

@@ -4,6 +4,7 @@ from django.shortcuts import reverse
 from django.utils.text import slugify
 from time import time
 import re
+from django.conf import settings
 
 alphabet_cyrillic_to_latin = {'а': 'a', 'б': 'b', 'в': 'v', 'г': 'g', 'д': 'd', 'е': 'e', 'ё': 'yo', 'ж': 'zh',
                               'з': 'z', 'и': 'i', 'й': 'j', 'к': 'k', 'л': 'l', 'м': 'm', 'н': 'n', 'о': 'o', 'п': 'p',
@@ -87,7 +88,7 @@ class Tag(models.Model):
 
 
 PATH_FOR_POST_IMAGES = 'static/img/post_images/'
-
+# settings.STATIC_ROOT
 
 def get_image_filename(instance, filename):
     """Получить ссылку, куда сохраним файл.
@@ -98,7 +99,7 @@ def get_image_filename(instance, filename):
         str
     """
     slug = gen_slug(instance.post.title)
-    return "{0}{1}-{2}".format(PATH_FOR_POST_IMAGES, slug, filename)
+    return "{0}/img/post_images/{1}-{2}".format(settings.STATIC_ROOT, slug, filename)
 
 
 class Images(models.Model):

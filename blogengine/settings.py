@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: don't run with debug turned on in production!
 #DEBUG = False
 
-ALLOWED_HOSTS = ['firstblogfornasta.herokuapp.com', '127.0.0.1']
+ALLOWED_HOSTS = ['84.201.181.32', '127.0.0.1']
 
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'cg#p$g+j9tax!#a3cup@1$8obt2_+&k3q+pmu)5%asj6yjpkag')
 
