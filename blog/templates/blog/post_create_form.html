@@ -5,7 +5,7 @@ Create Post - {{ block.super }}
 {% endblock %}
 
 {% block content %}
-
+<h2>Создать статью</h2>
 <form class="" action="{% url 'post_create_url' %}" method="post" enctype="multipart/form-data" >
     {% csrf_token %}
 
