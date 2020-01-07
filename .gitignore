@@ -4,3 +4,4 @@ nasta/
 env/
 .bak
 *.sqlite3
+static/
