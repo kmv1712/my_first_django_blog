@@ -37,7 +37,7 @@ def gen_slug(s):
 class Post(models.Model):
     title = models.CharField(max_length=150, db_index=True)
     slug = models.SlugField(max_length=150, blank=True, unique=True)
-    body = models.TextField(blank=True, db_index=True, help_text='Изображение добавлять например: текст {*.jpg(Расширение может быть любым)} текс')
+    body = models.TextField(blank=True, db_index=True, help_text='Изображение добавлять например: текст {src=*.jpg(Расширение может быть любым)} текс')
     body_text = models.TextField(blank=True, db_index=True, default='')
     tags = models.ManyToManyField('Tag', blank=True, related_name='posts')
     main_image = models.CharField(max_length=150, db_index=True, default='', help_text='Название изображение записывать с расширением')
@@ -87,8 +87,9 @@ class Tag(models.Model):
         ordering = ['title']
 
 
-PATH_FOR_POST_IMAGES = 'static/img/post_images/'
+# PATH_FOR_POST_IMAGES = 'static/img/post_images/'
 # settings.STATIC_ROOT
+
 
 def get_image_filename(instance, filename):
     """Получить ссылку, куда сохраним файл.
